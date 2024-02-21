@@ -1,0 +1,4 @@
+[theme]
+base="light"
+secondaryBackgroundColor="#fed521"
+textColor="#0d7dbf"

@@ -6,48 +6,65 @@ from matplotlib.colors import ListedColormap
 import plotly.express as px
 import streamlit as st
 import plotly.graph_objects as go
-
-
-
-
+import random
+import numpy as np
+from PIL import Image
 
 st.set_page_config(page_title="The Simpsons - Analysis",
                    page_icon="bar_chart:",
                    layout="wide")
-                
+
+
+
+
 
 df= pd.read_csv("simpsons_episodes.csv")
 df['original_air_date'] = pd.to_datetime(df['original_air_date'])
 df['year'] = df['original_air_date'].dt.year
 
 #______________ Side bar _________
+st.sidebar.title("The Simpsons Analysis")
 st.sidebar.header("Please filter here:")
 category = st.sidebar.selectbox(
     "Category",
-    [" ", "Season", "Characters", "Writers", "Directors", "Episodes"]
+    [" ", "Season", "Characters", "Writers", "Directors", "Episodes", "Correlations"]
 )
+
+
+if category == "Correlations":
+    feature_options = [" ", "Viewers & Ratings", "Viewers & Season", "Season & Ratings"] 
+elif category == "Others":
+    feature_options = [" ", "ABC", "General Dashboard"] 
+else:
+    feature_options = [" ", "Top 5 (More popular)", "Bottom 5 (Less popular)", "Overall Performance"]
 
 feature = st.sidebar.selectbox(
     "Feature to analyze",
-    [" ", "Top 5 (More popular)", "Bottom 5 (Less popular)", "Overall Performance"]
+    feature_options
 )
 
+# Display image if no category is selected
+if category == " ":
+    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\01. Intro.jpg")
+    st.image(image, use_column_width=True)
 
+
+
+
+
+###Season
 # Filter info by user selection
 if category == "Season" and feature == "Top 5 (More popular)":
     top_5_us_viewers = df.groupby("season")["us_viewers_in_millions"].mean().nlargest(5).reset_index()
     fig3 = px.bar(top_5_us_viewers, x="season", y="us_viewers_in_millions", title="Top 5 Seasons by US Viewers (Millions)")
-    fig3.update_layout(width=400, height=400)  # graphic size
+    fig3.update_layout(width=450, height=450)  # graphic size
     
-    st.plotly_chart(fig3, use_container_width=True)
     
     st.write("\n")  # space between graphics
     
     top_5_imdb_ratings = df.groupby("season")["imdb_rating"].mean().nlargest(5).reset_index()
     fig1 = px.bar(top_5_imdb_ratings, x="season", y="imdb_rating", title="Top 5 Seasons by Imdb Rating")
     
-    top_5_tmdb_ratings = df.groupby("season")["tmdb_rating"].mean().nlargest(5).reset_index()
-    fig2 = px.bar(top_5_tmdb_ratings, x="season", y="tmdb_rating", title="Top 5 Seasons by Tmdb Rating")
     
     col1, col2 = st.columns(2)
     with col1:
@@ -60,26 +77,20 @@ if category == "Season" and feature == "Bottom 5 (Less popular)":
     top_5_us_viewers = df.groupby("season")["us_viewers_in_millions"].mean().reset_index()
     top_5_us_viewers = top_5_us_viewers.sort_values(by="us_viewers_in_millions", ascending=True).head(5)
     fig3 = px.bar(top_5_us_viewers, x="season", y="us_viewers_in_millions", title="Bottom 5 Seasons by US Viewers (Millions)")
-    fig3.update_layout(width=400, height=400, bargap=0.1)  
+    fig3.update_layout(width=450, height=450, bargap=0.1)  
     
-    st.plotly_chart(fig3, use_container_width=True)
     
-    st.write("\n") 
     
     top_5_imdb_ratings = df.groupby("season")["imdb_rating"].mean().nsmallest(5).reset_index()
     top_5_imdb_ratings = top_5_imdb_ratings.dropna()
     fig1 = px.bar(top_5_imdb_ratings, x="season", y="imdb_rating", title="Bottom 5 Seasons by Imdb Rating")
     
-    top_5_tmdb_ratings = df.groupby("season")["tmdb_rating"].mean().nsmallest(5).reset_index()
-    top_5_tmdb_ratings = top_5_tmdb_ratings.dropna()
-    fig2 = px.bar(top_5_tmdb_ratings, x="season", y="tmdb_rating", title="Bottom 5 Seasons by Tmdb Rating")
-    fig2.update_layout(bargap=0.1)  
     
     col1, col2 = st.columns(2)
     with col1:
         st.plotly_chart(fig1, use_container_width=True)
     with col2:
-        st.plotly_chart(fig2, use_container_width=True)
+        st.plotly_chart(fig3, use_container_width=True)
 
 if category == "Season" and feature == "Overall Performance":
     import plotly.graph_objects as go
@@ -105,14 +116,9 @@ if category == "Season" and feature == "Overall Performance":
                              name='Average IMDb Rating',
                              line=dict(color='red')), secondary_y=True)
 
-    # Add line trace for average TMDb rating
-    fig.add_trace(go.Scatter(x=year_avg_ratings['year'], y=year_avg_ratings['tmdb_rating'],
-                             mode='lines+markers',
-                             name='Average TMDb Rating',
-                             line=dict(color='green')), secondary_y=True)
 
     # Update layout
-    fig.update_layout(title='Average US Viewers, IMDb, and TMDb Ratings Over Time',
+    fig.update_layout(title='Average US Viewers and IMDb Ratings Over Time',
                       xaxis_title='Year',
                       yaxis_title='Average US Viewers (Millions)',
                       yaxis2_title='Average Rating',
@@ -125,7 +131,7 @@ if category == "Season" and feature == "Overall Performance":
 if category == "Characters" and feature == "Top 5 (More popular)":
     
     # Subtitle
-    st.write("According to number of views")
+    st.subheader("According to number of views")
     # List of characters
     characters_list = ["Homer", "Marge", "Bart", "Lisa", "Maggie", "Ned", "Maude", "Rod", "Todd", "Burns", "Smithers", "Krusty", "Milhouse", "Nelson", "Ralph", "Wiggum", "Lou", "Eddie", "Moe", "Lenny", "Carl", "Barney", "Lovejoy", "Helen", "Clancy", "Seymour", "Edna", "Patty", "Selma", "Quimby", "Sideshow Bob", "Jimbo", "Kearney", "Dolph", "Willie", "Dr. Hibbert", "Bernice", "Itchy", "Scratchy", "Apu", "Manjula", "Comic Book Guy", "Frink", "Snake", "Hans", "Uter", "Duffman", "Bumblebee Man", "Squeaky-Voiced Teen", "Jasper", "Fat Tony", "Disco Stu", "Gil", "Crazy Cat Lady", "Brandine", "Cletus", "Luann", "Akira", "Dr. Nick", "Chalmers", "Rainier Wolfcastle", "Blue-Haired Lawyer", "Judge Snyder", "Troy McClure", "Lindsey Naegle", "Kirk", "Artie Ziff", "Herb Powell", "Cecil", "Mona", "Amber Dempsey", "Laura Powers", "Jessica", "Darcy", "Hugo", "Bleeding Gums Murphy", "Rabbi Krustofski", "Astronaut", "Tom", "Lurleen Lumpkin", "Jub-Jub", "Scott Christian", "Dewey Largo", "Lunchlady Doris", "Otto", "Wendell", "Lewis", "Sherri", "Terri", "Database", "Martin Prince", "Allison Taylor", "Jasper Beardley", "Groundskeeper", "Willie", "Dr.", "Hibbert", "Blue", "Lawyer", "Judge", "Snyder", "Troy", "McClure", "Lindsey", "Naegle", "Kirk", "Artie", "Ziff", "Herb", "Powell", "Cecil", "Mona", "Amber", "Dempsey", "Laura", "Powers", "Jessica", "Darcy", "Hugo", "Rabbi", "Krustofski", "Astronaut", "Tom", "Jub-Jub", "Scott", "Christian", "Dewey", "Largo", "Lunchlady", "Doris", "Otto", "Wendell", "Lewis", "Sherri", "Terri", "Database", "Martin", "Prince", "Allison", "Taylor", "Jasper"]
 
@@ -155,9 +161,38 @@ if category == "Characters" and feature == "Top 5 (More popular)":
     # Display the DataFrame
     st.dataframe(characters_views_top_5)
 
+    # Load and display image
+    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\1.jpg")
+    st.image(image, caption=' ', use_column_width=True)
+    
+    # Define the color map
+    color_map = {
+        "Homer": "yellow",
+        "Bart": "blue",
+        "Lisa": "red",
+        "Marge": "green",
+        "Burns": "lightblue"
+    }
+
+    # Create a bar chart 
+    fig = px.bar(characters_views_top_5, x='characters', y='us_viewers_in_millions',
+                title='Top 5 Characters by US Viewers in Millions',
+                color='characters', color_discrete_map=color_map)
+
+    # Set the x-axis label
+    fig.update_xaxes(title_text='Characters')
+
+    # Set the y-axis label
+    fig.update_yaxes(title_text='US Viewers in Millions')
+
+    # Display the chart
+    st.plotly_chart(fig, use_container_width=True)
+    
+
+
     #IMDb Rating
     # Subtitle
-    st.write("According to IMDb Rating")
+    st.subheader("According to IMDb Rating")
     # Convert the lists in the 'characters' column to individual values
     df2 = df.explode('characters')
     # Create a new DataFrame with the average of 'imdb_rating' per character
@@ -174,29 +209,35 @@ if category == "Characters" and feature == "Top 5 (More popular)":
 
     # Display the DataFrame with the average of 'imdb_rating' per character
     st.dataframe(characters_imdb_avg_top_5)
+    
+    # Load and display image
+    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\2.jpg")
+    st.image(image, caption=' ', use_column_width=True)
 
-#TMDb Rating
-    # Subtitle
-    st.write("According to TMDb Rating")
-    # Create a new DataFrame with the average of 'tmdb_rating' per character
-    characters_tmdb_avg = df2.groupby('characters')['tmdb_rating'].mean().reset_index()
+    # Define a list of random colors
+    random_colors = []
+    for _ in range(5):
+        random_colors.append(f"rgb({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)})")
 
-    # Sort the DataFrame by the average of 'imdb_rating' in descending order
-    characters_tmdb_avg = characters_tmdb_avg.sort_values(by='tmdb_rating', ascending=False)
+    # Create a bar chart 
+    fig = px.bar(characters_imdb_avg_top_5, x='characters', y='imdb_rating',
+                title='Top 5 Characters by IMDb Rating',
+                color='characters', color_discrete_sequence=random_colors)
 
-    # Select the top 5 characters and reset the index to start from 1
-    characters_tmdb_avg_top_5 = characters_tmdb_avg.head(5).reset_index(drop=True)
+    # Set the x-axis label
+    fig.update_xaxes(title_text='Characters')
 
-    # Add 1 to the index to start from 1
-    characters_tmdb_avg_top_5.index += 1
+    # Set the y-axis label
+    fig.update_yaxes(title_text='IMDb Rating')
 
-    # Display the DataFrame with the average of 'imdb_rating' per character
-    st.dataframe(characters_tmdb_avg_top_5)
+    # Display the chart
+    st.plotly_chart(fig, use_container_width=True)
+
 
 if category == "Characters" and feature == "Bottom 5 (Less popular)":
     
     # Subtitle
-    st.write("According to number of views")
+    st.subheader("According to number of views")
 
      # List of characters
     characters_list = ["Homer", "Marge", "Bart", "Lisa", "Maggie", "Ned", "Maude", "Rod", "Todd", "Burns", "Smithers", "Krusty", "Milhouse", "Nelson", "Ralph", "Wiggum", "Lou", "Eddie", "Moe", "Lenny", "Carl", "Barney", "Lovejoy", "Helen", "Clancy", "Seymour", "Edna", "Patty", "Selma", "Quimby", "Sideshow Bob", "Jimbo", "Kearney", "Dolph", "Willie", "Dr. Hibbert", "Bernice", "Itchy", "Scratchy", "Apu", "Manjula", "Comic Book Guy", "Frink", "Snake", "Hans", "Uter", "Duffman", "Bumblebee Man", "Squeaky-Voiced Teen", "Jasper", "Fat Tony", "Disco Stu", "Gil", "Crazy Cat Lady", "Brandine", "Cletus", "Luann", "Akira", "Dr. Nick", "Chalmers", "Rainier Wolfcastle", "Blue-Haired Lawyer", "Judge Snyder", "Troy McClure", "Lindsey Naegle", "Kirk", "Artie Ziff", "Herb Powell", "Cecil", "Mona", "Amber Dempsey", "Laura Powers", "Jessica", "Darcy", "Hugo", "Bleeding Gums Murphy", "Rabbi Krustofski", "Astronaut", "Tom", "Lurleen Lumpkin", "Jub-Jub", "Scott Christian", "Dewey Largo", "Lunchlady Doris", "Otto", "Wendell", "Lewis", "Sherri", "Terri", "Database", "Martin Prince", "Allison Taylor", "Jasper Beardley", "Groundskeeper", "Willie", "Dr.", "Hibbert", "Blue", "Lawyer", "Judge", "Snyder", "Troy", "McClure", "Lindsey", "Naegle", "Kirk", "Artie", "Ziff", "Herb", "Powell", "Cecil", "Mona", "Amber", "Dempsey", "Laura", "Powers", "Jessica", "Darcy", "Hugo", "Rabbi", "Krustofski", "Astronaut", "Tom", "Jub-Jub", "Scott", "Christian", "Dewey", "Largo", "Lunchlady", "Doris", "Otto", "Wendell", "Lewis", "Sherri", "Terri", "Database", "Martin", "Prince", "Allison", "Taylor", "Jasper"]
@@ -230,10 +271,33 @@ if category == "Characters" and feature == "Bottom 5 (Less popular)":
     # Display the DataFrame
     st.dataframe(characters_views_bottom_5)
 
+    # Load and display image
+    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\3.jpg")
+    st.image(image, caption=' ', use_column_width=True)
+
+    # Define a list of random colors
+    random_colors = []
+    for _ in range(5):
+        random_colors.append(f"rgb({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)})")
+
+    # Create a bar chart 
+    fig = px.bar(characters_views_bottom_5, x='characters', y='us_viewers_in_millions',
+                title='Bottom 5 Characters by US Viewers in Millions',
+                color='characters', color_discrete_sequence=random_colors)
+
+    # Set the x-axis label
+    fig.update_xaxes(title_text='Characters')
+
+    # Set the y-axis label
+    fig.update_yaxes(title_text='US Viewers in Millions')
+
+    # Display the chart
+    st.plotly_chart(fig, use_container_width=True)
+
     #IMDb Rating
     
     # Subtitle
-    st.write("According to IMDb Rating")
+    st.subheader("According to IMDb Rating")
 
     # Convert the lists in the 'characters' column to individual values
     df2 = df.explode('characters')
@@ -249,35 +313,43 @@ if category == "Characters" and feature == "Bottom 5 (Less popular)":
     # Add 1 to the index to start from 1
     characters_imdb_avg_bottom_5.index += 1
 
-    # Display the DataFrame with the average of 'imdb_rating' per character
+    # Show DataFrame with the average of 'imdb_rating' per character
     st.dataframe(characters_imdb_avg_bottom_5)
 
-#TMDb Rating
-    
-    # Subtitle
-    st.write("According to TMDb Rating")
+    # Load and display image
+    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\4.jpg")
+    st.image(image, caption=' ', use_column_width=True)
 
-    # Create a new DataFrame with the average of 'tmdb_rating' per character
-    characters_tmdb_avg = df2.groupby('characters')['tmdb_rating'].mean().reset_index()
+    # Define a list of random colors
+    random_colors = []
+    for _ in range(5):
+        random_colors.append(f"rgb({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)})")
 
-    # Sort the DataFrame by the average of 'imdb_rating' in descending order
-    characters_tmdb_avg = characters_tmdb_avg.sort_values(by='tmdb_rating', ascending=False)
+    # Create a bar chart 
+    fig = px.bar(characters_imdb_avg_bottom_5, x='characters', y='imdb_rating',
+                title='Bottom 5 Characters by IMDb Rating',
+                color='characters', color_discrete_sequence=random_colors)
 
-    # Select the top 5 characters and reset the index to start from 1
-    characters_tmdb_avg_bottom_5 = characters_tmdb_avg.tail(5).reset_index(drop=True)
+    # Set the x-axis label
+    fig.update_xaxes(title_text='Characters')
 
-    # Add 1 to the index to start from 1
-    characters_tmdb_avg_bottom_5.index += 1
+    # Set the y-axis label
+    fig.update_yaxes(title_text='IMDb Rating')
 
-    # Display the DataFrame with the average of 'imdb_rating' per character
-    st.dataframe(characters_tmdb_avg_bottom_5)
+    # Display the chart
+    st.plotly_chart(fig, use_container_width=True)
 
 if category == "Characters" and feature == "Overall Performance":
-    # Subtitle
-    st.write("According to number of views")
+   
+    # Load and display image
+    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\5.jpg")
+    st.image(image, caption=' ', use_column_width=True)
+
+   
+    
     # List of characters
     characters_list = ["Homer", "Marge", "Bart", "Lisa", "Maggie", "Ned", "Maude", "Rod", "Todd", "Burns", "Smithers", "Krusty", "Milhouse", "Nelson", "Ralph", "Wiggum", "Lou", "Eddie", "Moe", "Lenny", "Carl", "Barney", "Lovejoy", "Helen", "Clancy", "Seymour", "Edna", "Patty", "Selma", "Quimby", "Sideshow Bob", "Jimbo", "Kearney", "Dolph", "Willie", "Dr. Hibbert", "Bernice", "Itchy", "Scratchy", "Apu", "Manjula", "Comic Book Guy", "Frink", "Snake", "Hans", "Uter", "Duffman", "Bumblebee Man", "Squeaky-Voiced Teen", "Jasper", "Fat Tony", "Disco Stu", "Gil", "Crazy Cat Lady", "Brandine", "Cletus", "Luann", "Akira", "Dr. Nick", "Chalmers", "Rainier Wolfcastle", "Blue-Haired Lawyer", "Judge Snyder", "Troy McClure", "Lindsey Naegle", "Kirk", "Artie Ziff", "Herb Powell", "Cecil", "Mona", "Amber Dempsey", "Laura Powers", "Jessica", "Darcy", "Hugo", "Bleeding Gums Murphy", "Rabbi Krustofski", "Astronaut", "Tom", "Lurleen Lumpkin", "Jub-Jub", "Scott Christian", "Dewey Largo", "Lunchlady Doris", "Otto", "Wendell", "Lewis", "Sherri", "Terri", "Database", "Martin Prince", "Allison Taylor", "Jasper Beardley", "Groundskeeper", "Willie", "Dr.", "Hibbert", "Blue", "Lawyer", "Judge", "Snyder", "Troy", "McClure", "Lindsey", "Naegle", "Kirk", "Artie", "Ziff", "Herb", "Powell", "Cecil", "Mona", "Amber", "Dempsey", "Laura", "Powers", "Jessica", "Darcy", "Hugo", "Rabbi", "Krustofski", "Astronaut", "Tom", "Jub-Jub", "Scott", "Christian", "Dewey", "Largo", "Lunchlady", "Doris", "Otto", "Wendell", "Lewis", "Sherri", "Terri", "Database", "Martin", "Prince", "Allison", "Taylor", "Jasper"]
-
+    st.subheader(r"According to number of views   |   |              According to IMDb Rating")
     # Function to find characters in the description
     def find_characters(description):
         characters = []
@@ -302,10 +374,7 @@ if category == "Characters" and feature == "Overall Performance":
     # Add 1 to the index to start from 1
     characters_views.index += 1
 
-    st.dataframe(characters_views)
-
-    # Subtitle
-    st.write("According to IMDb Rating")
+   
 
     # Create a new DataFrame with the average of 'tmdb_rating' per character
     characters_imdb_avg = df2.groupby('characters')['imdb_rating'].mean().reset_index()
@@ -317,33 +386,38 @@ if category == "Characters" and feature == "Overall Performance":
     # Add 1 to the index to start from 1
     characters_imdb_avg.index += 1
 
-    st.dataframe(characters_imdb_avg)
+   
+
+    # Display DataFrames side by side
+    left_column, right_column = st.columns(2)
+
+    with left_column:
+        st.dataframe(characters_views)
+
+    with right_column:
+        st.dataframe(characters_imdb_avg)
 
     
-    # Subtitle
-    st.write("According to TMDb Rating")
-
-    # Create a new DataFrame with the average of 'tmdb_rating' per character
-    characters_tmdb_avg = df2.groupby('characters')['tmdb_rating'].mean().reset_index()
-
-    # Sort the DataFrame by the average of 'imdb_rating' in descending order
-    characters_tmdb_avg = characters_tmdb_avg.sort_values(by='tmdb_rating', ascending=False)
-    # Reset the index and rename the index column
-    characters_tmdb_avg = characters_tmdb_avg.reset_index(drop=True).rename_axis('Rank')
-    # Add 1 to the index to start from 1
-    characters_tmdb_avg.index += 1
-
-    st.dataframe(characters_tmdb_avg)
 
 
 ###WRITERS
     
 if category == "Writers" and feature == "Top 5 (More popular)":
+    # Subtitle
+    st.subheader("According to number of views")
+    # Divide the screen into two columns
+    left_column, right_column = st.columns(2)
+
+    with left_column:
+        top_5_writerss_more_views = df.groupby('written_by')['us_viewers_in_millions'].mean().nlargest(5)
+        st.dataframe(top_5_writerss_more_views)
+
+    with right_column:
+        # Load and display image
+        image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\6.jpg")
+        st.image(image, caption=' ', use_column_width=False, width=int(image.width*0.45))
 
     
-    top_5_writerss_more_views = df.groupby('written_by')['us_viewers_in_millions'].mean().nlargest(5)
-    st.dataframe(top_5_writerss_more_views)
-
     # Plotting the line chart
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(top_5_writerss_more_views.index, top_5_writerss_more_views.values, marker='o')
@@ -362,9 +436,22 @@ if category == "Writers" and feature == "Top 5 (More popular)":
     # Displaying the plot in Streamlit
     st.pyplot(fig)
 
-    top_5_writerss_more_views = df.groupby('written_by')['imdb_rating'].mean().nlargest(5)
-    st.dataframe(top_5_writerss_more_views)
+    # Subtitle
+    st.subheader("According to IMDb Rating")
+    
+    # Divide the screen into two columns
+    left_column, right_column = st.columns(2)
 
+    with left_column:
+        top_5_writerss_more_views = df.groupby('written_by')['imdb_rating'].mean().nlargest(5)
+        st.dataframe(top_5_writerss_more_views)
+
+    with right_column:
+        # Load and display image
+        image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\7.jpg")
+        st.image(image, caption=' ', use_column_width=False, width=int(image.width*0.35))
+
+    
     # Plotting the line chart
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(top_5_writerss_more_views.index, top_5_writerss_more_views.values, marker='o')
@@ -373,46 +460,499 @@ if category == "Writers" and feature == "Top 5 (More popular)":
     ax.set_title('Top 5 Writers by Mean Viewers')
     ax.tick_params(axis='x', rotation=45)
     ax.grid(True)
-    plt.tight_layout()
+
+    # Truncate the labels on the x-axis
+    labels = [name[:15] + '...' if len(name) > 15 else name for name in top_5_writerss_more_views.index]
+    ax.set_xticks(range(len(labels)))
+    ax.set_xticklabels(labels)
 
     # Setting y-axis limit to start from 0
     ax.set_ylim(bottom=0)
 
     plt.tight_layout()
 
-    # Displaying the plot in Streamlit
+    # Display the plot in Streamlit
     st.pyplot(fig)
 
-    top_5_writerss_more_views = df.groupby('written_by')['tmdb_rating'].mean().nlargest(5)
-    st.dataframe(top_5_writerss_more_views)
-    # Plotting the line chart
-    # Plotting the line chart
-    # Plotting the line chart with X and Y axes swapped
-    fig, ax = plt.subplots(figsize=(9, 4.5))  # Adjust the size as needed
-    ax.plot(top_5_writerss_more_views.values, top_5_writerss_more_views.index, marker='o')  # Swap X and Y
-    ax.set_xlabel('Mean Viewers (Millions)')  # Swap X and Y labels
-    ax.set_ylabel('Written By')
-    ax.set_title('Top 5 Writers by Mean Viewers')
-    ax.tick_params(axis='y', rotation=0)  # Rotate Y axis labels
-    ax.grid(True)
-
-# Setting x-axis limit to start from 0
-    ax.set_xlim(left=0)
-
-    plt.tight_layout()
-
-# Displaying the plot in Streamlit
-    st.pyplot(fig)
     
 
 if category == "Writers" and feature == "Bottom 5 (Less popular)":
+    # Subtitle
+    st.subheader("According to number of views")
+        # Divide the screen into two columns
+    left_column, right_column = st.columns(2)
+
+    with left_column:
+        top_5_writerss_less_views = df.groupby('written_by')['us_viewers_in_millions'].mean().nsmallest(5)
+        st.dataframe(top_5_writerss_less_views)
+
+    with right_column:
+        # Load and display image
+        image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\8.jpg")
+        st.image(image, caption=' ', use_column_width=False, width=int(image.width*0.35))
 
     
-    top_5_writerss_less_views = df.groupby('written_by')['us_viewers_in_millions'].mean().nsmallest(5)
-    st.dataframe(top_5_writerss_less_views)
 
-    top_5_writerss_less_views = df.groupby('written_by')['imdb_rating'].mean().nsmallest(5)
-    st.dataframe(top_5_writerss_less_views)
+    
 
-    top_5_writerss_less_views = df.groupby('written_by')['tmdb_rating'].mean().nsmallest(5)
-    st.dataframe(top_5_writerss_less_views)
+    # Create the plot
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.plot(top_5_writerss_less_views.index, top_5_writerss_less_views.values, marker='o')
+    ax.set_xlabel('Written By')
+    ax.set_ylabel('Mean Viewers (Millions)')
+    ax.set_title('Bottom 5 Writers by Mean Viewers')
+    ax.tick_params(axis='x', rotation=45)
+    ax.grid(True)
+
+    # Truncate the labels on the x-axis
+    labels = [name[:15] + '...' if len(name) > 15 else name for name in top_5_writerss_less_views.index]
+    ax.set_xticks(range(len(labels)))
+    ax.set_xticklabels(labels)
+
+    # Setting y-axis limit to start from 0
+    ax.set_ylim(bottom=0)
+
+    plt.tight_layout()
+
+    # Display the plot in Streamlit
+    st.pyplot(fig)
+
+    # Subtitle
+    st.subheader("According to IMDb Rating")
+        # Divide the screen into two columns
+    left_column, right_column = st.columns(2)
+
+    with left_column:
+        top_5_writerss_less_views_imdb = df.groupby('written_by')['imdb_rating'].mean().nsmallest(5)
+        st.dataframe(top_5_writerss_less_views_imdb)
+
+    with right_column:
+        # Load and display image
+        image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\9.jpg")
+        st.image(image, caption=' ', use_column_width=False, width=int(image.width*0.35))
+
+
+    
+
+    # Create the plot
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.plot(top_5_writerss_less_views_imdb.index, top_5_writerss_less_views_imdb.values, marker='o')
+    ax.set_xlabel('Written By')
+    ax.set_ylabel('Mean IMDb Rating')
+    ax.set_title('Bottom 5 Writers by Mean IMDb Rating')
+    ax.tick_params(axis='x', rotation=45)
+    ax.grid(True)
+
+    # Truncate the labels on the x-axis
+    labels = [name[:15] + '...' if len(name) > 15 else name for name in top_5_writerss_less_views_imdb.index]
+    ax.set_xticks(range(len(labels)))
+    ax.set_xticklabels(labels)
+
+    # Setting y-axis limit to start from 0
+    ax.set_ylim(bottom=0)
+
+    plt.tight_layout()
+
+    # Display the plot in Streamlit
+    st.pyplot(fig)
+
+
+
+if category == "Writers" and feature == "Overall Performance":
+    
+    
+    #Don't show warning
+    st.set_option('deprecation.showPyplotGlobalUse', False)
+
+   # Calculate average viewership for each writer
+    avg_viewers_by_writer = df.groupby('written_by')['us_viewers_in_millions'].mean()
+
+    # Get top 5 and bottom 5 writers by average viewership
+    top_5_writers = avg_viewers_by_writer.nlargest(5).index
+    bottom_5_writers = avg_viewers_by_writer.nsmallest(5).index
+
+    # Filter the original dataframe to include only top and bottom 5 writers
+    filtered_df = df[df['written_by'].isin(top_5_writers) | df['written_by'].isin(bottom_5_writers)]
+
+    # Create a pivot table with average viewership for each writer
+    pivot_table = filtered_df.pivot_table(index='written_by', values='us_viewers_in_millions', aggfunc='mean')
+
+    # Sort the pivot table by average viewership
+    sorted_pivot_table = pivot_table.reindex(avg_viewers_by_writer.nlargest(5).index.tolist() + avg_viewers_by_writer.nsmallest(5).index.tolist())
+
+
+    # Show the heatmap in the Streamlit app
+    st.write("### Heatmap of Average Views by Top 5 & Bottom 5 Writers")
+    plt.figure(figsize=(12, 8))
+    sns.heatmap(sorted_pivot_table, annot=True, cmap='coolwarm')
+    plt.ylabel('written_by')
+    plt.xlabel('Average Views')
+    plt.title('Average Views by Writer')
+    plt.yticks(range(10), sorted_pivot_table.index)
+    st.pyplot()
+
+    
+    # Don't show warning
+    st.set_option('deprecation.showPyplotGlobalUse', False)
+
+    # Calculate average IMDb rating for each writer
+    avg_imdb_by_writer = df.groupby('written_by')['imdb_rating'].mean()
+
+    # Get top 5 and bottom 5 writers by average IMDb rating
+    top_5_writers = avg_imdb_by_writer.nlargest(5).index
+    bottom_5_writers = avg_imdb_by_writer.nsmallest(5).index
+
+    # Filter the original dataframe to include only top and bottom 5 writers
+    filtered_df = df[df['written_by'].isin(top_5_writers) | df['written_by'].isin(bottom_5_writers)]
+
+    # Create a pivot table with average IMDb rating for each writer
+    pivot_table = filtered_df.pivot_table(index='written_by', values='imdb_rating', aggfunc='mean')
+
+    # Sort the pivot table by average IMDb rating
+    sorted_pivot_table = pivot_table.reindex(avg_imdb_by_writer.nlargest(5).index.tolist() + avg_imdb_by_writer.nsmallest(5).index.tolist())
+
+    # Truncate written_by to maximum of 20 characters and add ellipsis if truncated
+    sorted_pivot_table.index = sorted_pivot_table.index.map(lambda x: (x[:20] + '...') if len(x) > 20 else x)
+
+    # Show the heatmap in the Streamlit app
+    st.write("### Heatmap of Average IMDb Ratings by Top 5 & Bottom 5 Writers")
+    plt.figure(figsize=(12, 8))
+    sns.heatmap(sorted_pivot_table, annot=True, cmap='coolwarm')
+    plt.ylabel('written_by')
+    plt.xlabel('Average IMDb Ratings')
+    plt.title('Average IMDb Ratings by Writer')
+    plt.yticks(range(10), sorted_pivot_table.index)
+    st.pyplot()
+
+if category == "Directors" and feature == "Top 5 (More popular)":
+
+    # Subtitle
+    st.subheader("According to number of views")
+        # Divide the screen into two columns
+    left_column, right_column = st.columns(2)
+
+    with left_column:
+        top_5_directed_more_views = df.groupby('directed_by')['us_viewers_in_millions'].mean().nlargest(5)
+        st.dataframe(top_5_directed_more_views)
+    with right_column:
+        # Load and display image
+        image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\10.jpg")
+        st.image(image, caption=' ', use_column_width=False, width=int(image.width*0.5))
+
+    
+
+    # Plotting the line chart
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.plot(top_5_directed_more_views.index, top_5_directed_more_views.values, marker='o')
+    ax.set_xlabel('Directed By')
+    ax.set_ylabel('Mean Viewers (Millions)')
+    ax.set_title('Top 5 Directors by Mean Viewers')
+    ax.tick_params(axis='x', rotation=45)
+    ax.grid(True)
+    plt.tight_layout()
+
+    # Setting y-axis limit to start from 0
+    ax.set_ylim(bottom=0)
+
+    plt.tight_layout()
+
+    # Displaying the plot in Streamlit
+    st.pyplot(fig)
+
+    # Subtitle
+    st.subheader("According to IMDb Rating")
+        # Divide the screen into two columns
+    left_column, right_column = st.columns(2)
+
+    with left_column:
+        top_5_directed_more_views_imdb = df.groupby('directed_by')['imdb_rating'].mean().nlargest(5)
+        st.dataframe(top_5_directed_more_views_imdb)
+    with right_column:
+        # Load and display image
+        image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\11.jpg")
+        st.image(image, caption=' ', use_column_width=False, width=int(image.width*0.35))
+
+    
+
+    # Plotting the line chart
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.plot(top_5_directed_more_views_imdb.index, top_5_directed_more_views_imdb.values, marker='o')
+    ax.set_xlabel('Directed By')
+    ax.set_ylabel('Mean IMDb Rating')
+    ax.set_title('Top 5 Directors by Mean IMDb Rating')
+    ax.tick_params(axis='x', rotation=45)
+    ax.grid(True)
+
+    # Truncate the labels on the x-axis
+    labels = [name[:15] + '...' if len(name) > 15 else name for name in top_5_directed_more_views_imdb.index]
+    ax.set_xticks(range(len(labels)))
+    ax.set_xticklabels(labels)
+
+    # Setting y-axis limit to start from 0
+    ax.set_ylim(bottom=0)
+
+    plt.tight_layout()
+
+    # Display the plot in Streamlit
+    st.pyplot(fig)
+
+if category == "Directors" and feature == "Bottom 5 (Less popular)":
+    
+    # Subtitle
+    st.subheader("According to number of views")
+        # Divide the screen into two columns
+    left_column, right_column = st.columns(2)
+
+    with left_column:
+        top_5_directed_less_views = df.groupby('directed_by')['us_viewers_in_millions'].mean().nsmallest(5)
+        st.dataframe(top_5_directed_less_views)
+    with right_column:
+        # Load and display image
+        image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\12.jpg")
+        st.image(image, caption=' ', use_column_width=False, width=int(image.width*0.35))
+
+
+    # Create the plot
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.plot(top_5_directed_less_views.index, top_5_directed_less_views.values, marker='o')
+    ax.set_xlabel('Directed By')
+    ax.set_ylabel('Mean Viewers (Millions)')
+    ax.set_title('Bottom 5 Directors by Mean Viewers')
+    ax.tick_params(axis='x', rotation=45)
+    ax.grid(True)
+
+    # Truncate the labels on the x-axis
+    labels = [name[:15] + '...' if len(name) > 15 else name for name in top_5_directed_less_views.index]
+    ax.set_xticks(range(len(labels)))
+    ax.set_xticklabels(labels)
+
+    # Setting y-axis limit to start from 0
+    ax.set_ylim(bottom=0)
+
+    plt.tight_layout()
+
+    # Display the plot in Streamlit
+    st.pyplot(fig)
+
+    # Subtitle
+    st.subheader("According to IMDb Rating")
+        # Divide the screen into two columns
+    left_column, right_column = st.columns(2)
+
+    with left_column:
+        top_5_directed_less_views_imdb = df.groupby('directed_by')['imdb_rating'].mean().nsmallest(5)
+        st.dataframe(top_5_directed_less_views_imdb)
+    with right_column:
+        # Load and display image
+        image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\13.jpg")
+        st.image(image, caption=' ', use_column_width=False, width=int(image.width*0.35))
+
+
+    
+
+    # Create the plot
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.plot(top_5_directed_less_views_imdb.index, top_5_directed_less_views_imdb.values, marker='o')
+    ax.set_xlabel('Directed By')
+    ax.set_ylabel('Mean IMDb Rating')
+    ax.set_title('Bottom 5 Directors by Mean IMDb Rating')
+    ax.tick_params(axis='x', rotation=45)
+    ax.grid(True)
+
+    # Truncate the labels on the x-axis
+    labels = [name[:15] + '...' if len(name) > 15 else name for name in top_5_directed_less_views_imdb.index]
+    ax.set_xticks(range(len(labels)))
+    ax.set_xticklabels(labels)
+
+    # Setting y-axis limit to start from 0
+    ax.set_ylim(bottom=0)
+
+    plt.tight_layout()
+
+    # Display the plot in Streamlit
+    st.pyplot(fig)
+
+
+if category == "Directors" and feature == "Overall Performance":
+    # Don't show warning
+    st.set_option('deprecation.showPyplotGlobalUse', False)
+
+    # Calculate average viewership for each director
+    avg_viewers_by_director = df.groupby('directed_by')['us_viewers_in_millions'].mean()
+
+    # Get top 5 and bottom 5 directors by average viewership
+    top_5_directors = avg_viewers_by_director.nlargest(5).index
+    bottom_5_directors = avg_viewers_by_director.nsmallest(5).index
+
+    # Filter the original dataframe to include only top and bottom 5 directors
+    filtered_df = df[df['directed_by'].isin(top_5_directors) | df['directed_by'].isin(bottom_5_directors)]
+
+    # Create a pivot table with average viewership for each director
+    pivot_table = filtered_df.pivot_table(index='directed_by', values='us_viewers_in_millions', aggfunc='mean')
+
+    # Sort the pivot table by average viewership
+    sorted_pivot_table = pivot_table.reindex(avg_viewers_by_director.nlargest(5).index.tolist() + avg_viewers_by_director.nsmallest(5).index.tolist())
+
+    # Truncate directed_by to maximum of 20 characters and add ellipsis if truncated
+    sorted_pivot_table.index = sorted_pivot_table.index.map(lambda x: (x[:20] + '...') if len(x) > 20 else x)
+
+    # Show the heatmap in the Streamlit app
+    st.write("### Heatmap of Average Views by Top 5 & Bottom 5 Directors")
+    plt.figure(figsize=(12, 8))
+    sns.heatmap(sorted_pivot_table, annot=True, cmap='coolwarm')
+    plt.ylabel('directed_by')
+    plt.xlabel('Average Views')
+    plt.title('Average Views by Director')
+    plt.yticks(range(10), sorted_pivot_table.index)
+    st.pyplot()
+    
+    
+    
+    # Don't show warning
+    st.set_option('deprecation.showPyplotGlobalUse', False)
+
+    # Calculate average IMDb rating for each director
+    avg_imdb_by_director = df.groupby('directed_by')['imdb_rating'].mean()
+
+    # Get top 5 and bottom 5 directors by average IMDb rating
+    top_5_directors = avg_imdb_by_director.nlargest(5).index
+    bottom_5_directors = avg_imdb_by_director.nsmallest(5).index
+
+    # Filter the original dataframe to include only top and bottom 5 directors
+    filtered_df = df[df['directed_by'].isin(top_5_directors) | df['directed_by'].isin(bottom_5_directors)]
+
+    # Create a pivot table with average IMDb rating for each director
+    pivot_table = filtered_df.pivot_table(index='directed_by', values='imdb_rating', aggfunc='mean')
+
+    # Sort the pivot table by average IMDb rating
+    sorted_pivot_table = pivot_table.reindex(avg_imdb_by_director.nlargest(5).index.tolist() + avg_imdb_by_director.nsmallest(5).index.tolist())
+
+    # Truncate directed_by to maximum of 20 characters and add ellipsis if truncated
+    sorted_pivot_table.index = sorted_pivot_table.index.map(lambda x: (x[:20] + '...') if len(x) > 20 else x)
+
+    # Show the heatmap in the Streamlit app
+    st.write("### Heatmap of Average IMDb Ratings by Top 5 & Bottom 5 Directors")
+    plt.figure(figsize=(12, 8))
+    sns.heatmap(sorted_pivot_table, annot=True, cmap='coolwarm')
+    plt.ylabel('directed_by')
+    plt.xlabel('Average IMDb Ratings')
+    plt.title('Average IMDb Ratings by Director')
+    plt.yticks(range(10), sorted_pivot_table.index)
+    st.pyplot()
+
+#### Episodes
+if category == "Episodes" and feature == "Top 5 (More popular)":
+    
+    #IMDb rating
+    # Get the top 5 titles with highest IMDb rating
+    top_5_titles = df.nlargest(5, 'imdb_rating')
+
+    # Create a new DataFrame with the selected columns
+    top_5_episodes_views = top_5_titles[['season', 'number_in_season', 'imdb_rating', 'us_viewers_in_millions', 'title', 'description', 'written_by', 'directed_by']].copy()
+
+    # Display the new DataFrame in the dashboard
+    st.write("#### Top 5 episodes with Highest IMDb Rating")
+    st.write(top_5_episodes_views)
+    # Load and display image
+    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\14.jpg")
+    st.image(image, caption=' ', use_column_width=False, width=int(image.width*1.25))
+
+    #Number of Views
+    # Get the top 5 titles with highest number of views in US
+    top_5_titles = df.nlargest(5, 'us_viewers_in_millions')
+
+    # Create a new DataFrame with the selected columns
+    top_5_episodes_views = top_5_titles[['season', 'number_in_season', 'us_viewers_in_millions', 'imdb_rating', 'title', 'description', 'written_by', 'directed_by']].copy()
+
+    # Display the new DataFrame in the dashboard
+    st.write("#### Top 5 episodes with Highest Number of views")
+    st.write(top_5_episodes_views)
+
+    # Load and display image
+    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\15.jpg")
+    st.image(image, caption=' ', use_column_width=False, width=int(image.width*1.25))
+
+if category == "Episodes" and feature == "Bottom 5 (Less popular)":
+    
+    #IMDb rating
+    # Get the top 5 titles with highest IMDb rating
+    top_5_titles = df.nsmallest(5, 'imdb_rating')
+
+    # Create a new DataFrame with the selected columns
+    top_5_episodes_views = top_5_titles[['season', 'number_in_season', 'imdb_rating', 'us_viewers_in_millions', 'title', 'description', 'written_by', 'directed_by']].copy()
+
+    # Display the new DataFrame in the dashboard
+    st.write("#### Top 5 episodes with Lowest IMDb Rating")
+    st.write(top_5_episodes_views)
+
+    # Load and display image
+    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\16.jpg")
+    st.image(image, caption=' ', use_column_width=False, width=int(image.width*1.25))
+    
+    #Number of Views
+    # Get the top 5 titles with highest number of views in US
+    top_5_titles = df.nsmallest(5, 'us_viewers_in_millions')
+
+    # Create a new DataFrame with the selected columns
+    top_5_episodes_views = top_5_titles[['season', 'number_in_season', 'us_viewers_in_millions', 'imdb_rating', 'title', 'description', 'written_by', 'directed_by']].copy()
+
+    # Display the new DataFrame in the dashboard
+    st.write("#### Top 5 episodes with Lowest Number of views")
+    st.write(top_5_episodes_views)
+
+    # Load and display image
+    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\17.jpg")
+    st.image(image, caption=' ', use_column_width=False, width=int(image.width*1.25))
+
+if category == "Episodes" and feature == "Overall Performance":
+    #Number of episode with more views per season
+    # Find the row with the maximum 'us_viewers_in_millions' for each 'season'
+    max_viewers_rows = df.loc[df.groupby('season')['us_viewers_in_millions'].idxmax()]
+
+    # Create the line plot
+    fig = px.line(max_viewers_rows, x='season', y='us_viewers_in_millions', text='number_in_season', labels={'us_viewers_in_millions': 'US Viewers (Millions)'})
+    fig.update_traces(textposition="bottom center", hoverinfo='skip', name='Number in Season')
+    fig.update_layout(title='Number of episode with more views per season', xaxis_title='Season', yaxis_title='US Viewers (Millions)')
+
+    # Display the plot in Streamlit
+    st.plotly_chart(fig)
+
+    #Number of episode with highest IMDb rating per season
+    # Find the row with the maximum 'imdb_rating' for each 'season'
+    max_rating_rows = df.loc[df.groupby('season')['imdb_rating'].idxmax()]
+
+    # Create the line plot
+    fig = px.line(max_rating_rows, x='season', y='imdb_rating', text='number_in_season', labels={'imdb_rating': 'IMDb Rating'})
+    fig.update_traces(textposition="bottom center", hoverinfo='skip', name='Number in Season')
+    fig.update_layout(title='Number of episode with highest IMDb rating per season', xaxis_title='Season', yaxis_title='IMDb Rating')
+
+    # Display the plot in Streamlit
+    st.plotly_chart(fig)
+
+if category == "Correlations" and feature == "Viewers & Ratings":
+    # Create a scatter plot for the relationship between 'us_viewers_in_millions' and 'imdb_rating'
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.scatterplot(data=df, x='us_viewers_in_millions', y='imdb_rating', ax=ax)
+    ax.set_xlabel('US Viewers (Millions)')
+    ax.set_ylabel('IMDb Rating')
+    ax.set_title('Relationship between Viewers and IMDb Rating')
+    st.pyplot(fig)
+
+
+if category == "Correlations" and feature == "Viewers & Season":
+    # Create a scatter plot for the relationship between 'us_viewers_in_millions' and 'season'
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.scatterplot(data=df, x='season', y='us_viewers_in_millions', ax=ax)
+    ax.set_xlabel('Season')
+    ax.set_ylabel('US Viewers (Millions)')
+    ax.set_title('Relationship between Season and Viewers')
+    st.pyplot(fig)
+
+if category == "Correlations" and feature == "Season & Ratings":
+    # Create a scatter plot for the relationship between 'imdb_rating' and 'season'
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.scatterplot(data=df, x='season', y='imdb_rating', ax=ax)
+    ax.set_xlabel('Season')
+    ax.set_ylabel('IMDb Rating')
+    ax.set_title('Relationship between Season and IMDb Rating')
+    st.pyplot(fig)

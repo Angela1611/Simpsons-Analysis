@@ -45,7 +45,8 @@ feature = st.sidebar.selectbox(
 
 # Display image if no category is selected
 if category == " ":
-    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\01. Intro.jpg")
+    image_path = "images_simpsons/01. Intro.jpg"
+    image = Image.open(image_path)
     st.image(image, use_column_width=True)
 
 
@@ -162,7 +163,8 @@ if category == "Characters" and feature == "Top 5 (More popular)":
     st.dataframe(characters_views_top_5)
 
     # Load and display image
-    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\1.jpg")
+    image_path = "images_simpsons/1.jpg"
+    image = Image.open(image_path)
     st.image(image, caption=' ', use_column_width=True)
     
     # Define the color map
@@ -211,9 +213,9 @@ if category == "Characters" and feature == "Top 5 (More popular)":
     st.dataframe(characters_imdb_avg_top_5)
     
     # Load and display image
-    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\2.jpg")
+    image_path = "images_simpsons/2.jpg"
+    image = Image.open(image_path)
     st.image(image, caption=' ', use_column_width=True)
-
     # Define a list of random colors
     random_colors = []
     for _ in range(5):
@@ -272,9 +274,9 @@ if category == "Characters" and feature == "Bottom 5 (Less popular)":
     st.dataframe(characters_views_bottom_5)
 
     # Load and display image
-    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\3.jpg")
+    image_path = "images_simpsons/3.jpg"
+    image = Image.open(image_path)
     st.image(image, caption=' ', use_column_width=True)
-
     # Define a list of random colors
     random_colors = []
     for _ in range(5):
@@ -317,7 +319,8 @@ if category == "Characters" and feature == "Bottom 5 (Less popular)":
     st.dataframe(characters_imdb_avg_bottom_5)
 
     # Load and display image
-    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\4.jpg")
+    image_path = "images_simpsons/4.jpg"
+    image = Image.open(image_path)
     st.image(image, caption=' ', use_column_width=True)
 
     # Define a list of random colors
@@ -342,9 +345,9 @@ if category == "Characters" and feature == "Bottom 5 (Less popular)":
 if category == "Characters" and feature == "Overall Performance":
    
     # Load and display image
-    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\5.jpg")
+    image_path = "images_simpsons/5.jpg"
+    image = Image.open(image_path)
     st.image(image, caption=' ', use_column_width=True)
-
    
     
     # List of characters
@@ -414,9 +417,15 @@ if category == "Writers" and feature == "Top 5 (More popular)":
 
     with right_column:
         # Load and display image
-        image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\6.jpg")
-        st.image(image, caption=' ', use_column_width=False, width=int(image.width*0.45))
-
+        # Image path
+        image_path = "images_simpsons/6.jpg"
+        image = Image.open(image_path)
+        #size picture
+        new_width = image.width // 2
+        new_height = image.height // 2
+        resized_image = image.resize((new_width, new_height))
+        # Show picture
+        st.image(resized_image, caption=' ')
     
     # Plotting the line chart
     fig, ax = plt.subplots(figsize=(12, 6))
@@ -448,9 +457,14 @@ if category == "Writers" and feature == "Top 5 (More popular)":
 
     with right_column:
         # Load and display image
-        image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\7.jpg")
-        st.image(image, caption=' ', use_column_width=False, width=int(image.width*0.35))
-
+        image_path = "images_simpsons/7.jpg"
+        image = Image.open(image_path)
+        #size picture
+        new_width = image.width // 2
+        new_height = image.height // 2
+        resized_image = image.resize((new_width, new_height))
+        # Show picture
+        st.image(resized_image, caption=' ')
     
     # Plotting the line chart
     fig, ax = plt.subplots(figsize=(12, 6))
@@ -488,9 +502,14 @@ if category == "Writers" and feature == "Bottom 5 (Less popular)":
 
     with right_column:
         # Load and display image
-        image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\8.jpg")
-        st.image(image, caption=' ', use_column_width=False, width=int(image.width*0.35))
-
+        image_path = "images_simpsons/8.jpg"
+        image = Image.open(image_path)
+        #size picture
+        new_width = image.width // 2
+        new_height = image.height // 2
+        resized_image = image.resize((new_width, new_height))
+        # Show picture
+        st.image(resized_image, caption=' ')
     
 
     
@@ -528,9 +547,14 @@ if category == "Writers" and feature == "Bottom 5 (Less popular)":
 
     with right_column:
         # Load and display image
-        image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\9.jpg")
-        st.image(image, caption=' ', use_column_width=False, width=int(image.width*0.35))
-
+        image_path = "images_simpsons/9.jpg"
+        image = Image.open(image_path)
+        #size picture
+        new_width = image.width // 2
+        new_height = image.height // 2
+        resized_image = image.resize((new_width, new_height))
+        # Show picture
+        st.image(resized_image, caption=' ')
 
     
 
@@ -636,9 +660,14 @@ if category == "Directors" and feature == "Top 5 (More popular)":
         st.dataframe(top_5_directed_more_views)
     with right_column:
         # Load and display image
-        image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\10.jpg")
-        st.image(image, caption=' ', use_column_width=False, width=int(image.width*0.5))
-
+        image_path = "images_simpsons/10.jpg"
+        image = Image.open(image_path)
+        #size picture
+        new_width = image.width // 2
+        new_height = image.height // 2
+        resized_image = image.resize((new_width, new_height))
+        # Show picture
+        st.image(resized_image, caption=' ')
     
 
     # Plotting the line chart
@@ -669,9 +698,14 @@ if category == "Directors" and feature == "Top 5 (More popular)":
         st.dataframe(top_5_directed_more_views_imdb)
     with right_column:
         # Load and display image
-        image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\11.jpg")
-        st.image(image, caption=' ', use_column_width=False, width=int(image.width*0.35))
-
+        image_path = "images_simpsons/11.jpg"
+        image = Image.open(image_path)
+        #size picture
+        new_width = image.width // 2
+        new_height = image.height // 2
+        resized_image = image.resize((new_width, new_height))
+        # Show picture
+        st.image(resized_image, caption=' ')
     
 
     # Plotting the line chart
@@ -708,9 +742,14 @@ if category == "Directors" and feature == "Bottom 5 (Less popular)":
         st.dataframe(top_5_directed_less_views)
     with right_column:
         # Load and display image
-        image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\12.jpg")
-        st.image(image, caption=' ', use_column_width=False, width=int(image.width*0.35))
-
+        image_path = "images_simpsons/12.jpg"
+        image = Image.open(image_path)
+        #size picture
+        new_width = image.width // 2
+        new_height = image.height // 2
+        resized_image = image.resize((new_width, new_height))
+        # Show picture
+        st.image(resized_image, caption=' ')
 
     # Create the plot
     fig, ax = plt.subplots(figsize=(12, 6))
@@ -744,10 +783,14 @@ if category == "Directors" and feature == "Bottom 5 (Less popular)":
         st.dataframe(top_5_directed_less_views_imdb)
     with right_column:
         # Load and display image
-        image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\13.jpg")
-        st.image(image, caption=' ', use_column_width=False, width=int(image.width*0.35))
-
-
+        image_path = "images_simpsons/13.jpg"
+        image = Image.open(image_path)
+        #size picture
+        new_width = image.width // 2
+        new_height = image.height // 2
+        resized_image = image.resize((new_width, new_height))
+        # Show picture
+        st.image(resized_image, caption=' ')
     
 
     # Create the plot
@@ -854,8 +897,9 @@ if category == "Episodes" and feature == "Top 5 (More popular)":
     st.write("#### Top 5 episodes with Highest IMDb Rating")
     st.write(top_5_episodes_views)
     # Load and display image
-    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\14.jpg")
-    st.image(image, caption=' ', use_column_width=False, width=int(image.width*1.25))
+    image_path = "images_simpsons/14.jpg"
+    image = Image.open(image_path)
+    st.image(image, caption=' ', use_column_width=True)
 
     #Number of Views
     # Get the top 5 titles with highest number of views in US
@@ -869,8 +913,9 @@ if category == "Episodes" and feature == "Top 5 (More popular)":
     st.write(top_5_episodes_views)
 
     # Load and display image
-    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\15.jpg")
-    st.image(image, caption=' ', use_column_width=False, width=int(image.width*1.25))
+    image_path = "images_simpsons/15.jpg"
+    image = Image.open(image_path)
+    st.image(image, caption=' ', use_column_width=True)
 
 if category == "Episodes" and feature == "Bottom 5 (Less popular)":
     
@@ -886,8 +931,9 @@ if category == "Episodes" and feature == "Bottom 5 (Less popular)":
     st.write(top_5_episodes_views)
 
     # Load and display image
-    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\16.jpg")
-    st.image(image, caption=' ', use_column_width=False, width=int(image.width*1.25))
+    image_path = "images_simpsons/16.jpg"
+    image = Image.open(image_path)
+    st.image(image, caption=' ', use_column_width=True)
     
     #Number of Views
     # Get the top 5 titles with highest number of views in US
@@ -901,8 +947,9 @@ if category == "Episodes" and feature == "Bottom 5 (Less popular)":
     st.write(top_5_episodes_views)
 
     # Load and display image
-    image = Image.open(r"C:\Users\Usuario\Documents\Data Analytics\Simpsons-Analysis\images_simpsons\17.jpg")
-    st.image(image, caption=' ', use_column_width=False, width=int(image.width*1.25))
+    image_path = "images_simpsons/17.jpg"
+    image = Image.open(image_path)
+    st.image(image, caption=' ', use_column_width=True)
 
 if category == "Episodes" and feature == "Overall Performance":
     #Number of episode with more views per season

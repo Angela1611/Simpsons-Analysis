@@ -1,5 +1,5 @@
 
-### **The Simpsons: Performance and Popularity Indicators. **
+### ** The Simpsons: Performance and Popularity Indicators. **
 ####  By Angela Escobar
 
 

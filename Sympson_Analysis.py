@@ -131,7 +131,7 @@ if category == "Season" and feature == "Overall Performance":
 if category == "Characters" and feature == "Top 5 (More popular)":
     
     # Subtitle
-    st.subheader("According to number of views")
+    st.subheader("Top 5 Characters According to number of views")
     # List of characters
     characters_list = ["Homer", "Marge", "Bart", "Lisa", "Maggie", "Ned", "Maude", "Rod", "Todd", "Burns", "Smithers", "Krusty", "Milhouse", "Nelson", "Ralph", "Wiggum", "Lou", "Eddie", "Moe", "Lenny", "Carl", "Barney", "Lovejoy", "Helen", "Clancy", "Seymour", "Edna", "Patty", "Selma", "Quimby", "Sideshow Bob", "Jimbo", "Kearney", "Dolph", "Willie", "Dr. Hibbert", "Bernice", "Itchy", "Scratchy", "Apu", "Manjula", "Comic Book Guy", "Frink", "Snake", "Hans", "Uter", "Duffman", "Bumblebee Man", "Squeaky-Voiced Teen", "Jasper", "Fat Tony", "Disco Stu", "Gil", "Crazy Cat Lady", "Brandine", "Cletus", "Luann", "Akira", "Dr. Nick", "Chalmers", "Rainier Wolfcastle", "Blue-Haired Lawyer", "Judge Snyder", "Troy McClure", "Lindsey Naegle", "Kirk", "Artie Ziff", "Herb Powell", "Cecil", "Mona", "Amber Dempsey", "Laura Powers", "Jessica", "Darcy", "Hugo", "Bleeding Gums Murphy", "Rabbi Krustofski", "Astronaut", "Tom", "Lurleen Lumpkin", "Jub-Jub", "Scott Christian", "Dewey Largo", "Lunchlady Doris", "Otto", "Wendell", "Lewis", "Sherri", "Terri", "Database", "Martin Prince", "Allison Taylor", "Jasper Beardley", "Groundskeeper", "Willie", "Dr.", "Hibbert", "Blue", "Lawyer", "Judge", "Snyder", "Troy", "McClure", "Lindsey", "Naegle", "Kirk", "Artie", "Ziff", "Herb", "Powell", "Cecil", "Mona", "Amber", "Dempsey", "Laura", "Powers", "Jessica", "Darcy", "Hugo", "Rabbi", "Krustofski", "Astronaut", "Tom", "Jub-Jub", "Scott", "Christian", "Dewey", "Largo", "Lunchlady", "Doris", "Otto", "Wendell", "Lewis", "Sherri", "Terri", "Database", "Martin", "Prince", "Allison", "Taylor", "Jasper"]
 
@@ -192,7 +192,7 @@ if category == "Characters" and feature == "Top 5 (More popular)":
 
     #IMDb Rating
     # Subtitle
-    st.subheader("According to IMDb Rating")
+    st.subheader("Top 5 Characters According to IMDb Rating")
     # Convert the lists in the 'characters' column to individual values
     df2 = df.explode('characters')
     # Create a new DataFrame with the average of 'imdb_rating' per character
@@ -237,7 +237,7 @@ if category == "Characters" and feature == "Top 5 (More popular)":
 if category == "Characters" and feature == "Bottom 5 (Less popular)":
     
     # Subtitle
-    st.subheader("According to number of views")
+    st.subheader("Bottom 5 Characters According to number of views")
 
      # List of characters
     characters_list = ["Homer", "Marge", "Bart", "Lisa", "Maggie", "Ned", "Maude", "Rod", "Todd", "Burns", "Smithers", "Krusty", "Milhouse", "Nelson", "Ralph", "Wiggum", "Lou", "Eddie", "Moe", "Lenny", "Carl", "Barney", "Lovejoy", "Helen", "Clancy", "Seymour", "Edna", "Patty", "Selma", "Quimby", "Sideshow Bob", "Jimbo", "Kearney", "Dolph", "Willie", "Dr. Hibbert", "Bernice", "Itchy", "Scratchy", "Apu", "Manjula", "Comic Book Guy", "Frink", "Snake", "Hans", "Uter", "Duffman", "Bumblebee Man", "Squeaky-Voiced Teen", "Jasper", "Fat Tony", "Disco Stu", "Gil", "Crazy Cat Lady", "Brandine", "Cletus", "Luann", "Akira", "Dr. Nick", "Chalmers", "Rainier Wolfcastle", "Blue-Haired Lawyer", "Judge Snyder", "Troy McClure", "Lindsey Naegle", "Kirk", "Artie Ziff", "Herb Powell", "Cecil", "Mona", "Amber Dempsey", "Laura Powers", "Jessica", "Darcy", "Hugo", "Bleeding Gums Murphy", "Rabbi Krustofski", "Astronaut", "Tom", "Lurleen Lumpkin", "Jub-Jub", "Scott Christian", "Dewey Largo", "Lunchlady Doris", "Otto", "Wendell", "Lewis", "Sherri", "Terri", "Database", "Martin Prince", "Allison Taylor", "Jasper Beardley", "Groundskeeper", "Willie", "Dr.", "Hibbert", "Blue", "Lawyer", "Judge", "Snyder", "Troy", "McClure", "Lindsey", "Naegle", "Kirk", "Artie", "Ziff", "Herb", "Powell", "Cecil", "Mona", "Amber", "Dempsey", "Laura", "Powers", "Jessica", "Darcy", "Hugo", "Rabbi", "Krustofski", "Astronaut", "Tom", "Jub-Jub", "Scott", "Christian", "Dewey", "Largo", "Lunchlady", "Doris", "Otto", "Wendell", "Lewis", "Sherri", "Terri", "Database", "Martin", "Prince", "Allison", "Taylor", "Jasper"]
@@ -297,7 +297,7 @@ if category == "Characters" and feature == "Bottom 5 (Less popular)":
     #IMDb Rating
     
     # Subtitle
-    st.subheader("According to IMDb Rating")
+    st.subheader("Bottom 5 Characters According to IMDb Rating")
 
     # Convert the lists in the 'characters' column to individual values
     df2 = df.explode('characters')
@@ -404,7 +404,7 @@ if category == "Characters" and feature == "Overall Performance":
     
 if category == "Writers" and feature == "Top 5 (More popular)":
     # Subtitle
-    st.subheader("According to number of views")
+    st.subheader("Top 5 Writers According to number of views")
     # Divide the screen into two columns
     left_column, right_column = st.columns(2)
 
@@ -437,7 +437,7 @@ if category == "Writers" and feature == "Top 5 (More popular)":
     st.pyplot(fig)
 
     # Subtitle
-    st.subheader("According to IMDb Rating")
+    st.subheader("Top 5 Writers According to IMDb Rating")
     
     # Divide the screen into two columns
     left_column, right_column = st.columns(2)
@@ -478,7 +478,7 @@ if category == "Writers" and feature == "Top 5 (More popular)":
 
 if category == "Writers" and feature == "Bottom 5 (Less popular)":
     # Subtitle
-    st.subheader("According to number of views")
+    st.subheader("Bottom 5 Writers According to number of views")
         # Divide the screen into two columns
     left_column, right_column = st.columns(2)
 
@@ -518,7 +518,7 @@ if category == "Writers" and feature == "Bottom 5 (Less popular)":
     st.pyplot(fig)
 
     # Subtitle
-    st.subheader("According to IMDb Rating")
+    st.subheader("Bottom 5 Writers According to IMDb Rating")
         # Divide the screen into two columns
     left_column, right_column = st.columns(2)
 
@@ -627,7 +627,7 @@ if category == "Writers" and feature == "Overall Performance":
 if category == "Directors" and feature == "Top 5 (More popular)":
 
     # Subtitle
-    st.subheader("According to number of views")
+    st.subheader("Top 5 Directors According to number of views")
         # Divide the screen into two columns
     left_column, right_column = st.columns(2)
 
@@ -660,7 +660,7 @@ if category == "Directors" and feature == "Top 5 (More popular)":
     st.pyplot(fig)
 
     # Subtitle
-    st.subheader("According to IMDb Rating")
+    st.subheader("Top 5 Directors According to IMDb Rating")
         # Divide the screen into two columns
     left_column, right_column = st.columns(2)
 
@@ -699,7 +699,7 @@ if category == "Directors" and feature == "Top 5 (More popular)":
 if category == "Directors" and feature == "Bottom 5 (Less popular)":
     
     # Subtitle
-    st.subheader("According to number of views")
+    st.subheader("Bottom 5 Directors According to number of views")
         # Divide the screen into two columns
     left_column, right_column = st.columns(2)
 
@@ -735,7 +735,7 @@ if category == "Directors" and feature == "Bottom 5 (Less popular)":
     st.pyplot(fig)
 
     # Subtitle
-    st.subheader("According to IMDb Rating")
+    st.subheader("Bottom 5 Directors According to IMDb Rating")
         # Divide the screen into two columns
     left_column, right_column = st.columns(2)
 

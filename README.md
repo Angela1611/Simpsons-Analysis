@@ -14,7 +14,7 @@
 
 
 ## Access to the streamlit app: 
-You can access to the interactive dashboard at the following link: 
+You can access to the interactive dashboard at the following link: https://the-simpsons-analysis.streamlit.app/
 
 
 ## Project description and objective

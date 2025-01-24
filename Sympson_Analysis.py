@@ -20,7 +20,7 @@ st.set_page_config(page_title="The Simpsons - Analysis",
 
 df= pd.read_csv("simpsons_episodes.csv")
 df['original_air_date'] = pd.to_datetime(df['original_air_date'])
-df['year'] = df['original_air_date'].dt.year.
+df['year'] = df['original_air_date'].dt.year
 
 #______________ Side bar _________
 st.sidebar.title("The Simpsons Analysis")

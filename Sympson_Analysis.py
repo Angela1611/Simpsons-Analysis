@@ -22,7 +22,7 @@ df= pd.read_csv("simpsons_episodes.csv")
 df['original_air_date'] = pd.to_datetime(df['original_air_date'])
 df['year'] = df['original_air_date'].dt.year
 
-#______________ Side bar _________
+#______________ Side bar ___________
 st.sidebar.title("The Simpsons Analysis")
 st.sidebar.header("Please filter here:")
 category = st.sidebar.selectbox(

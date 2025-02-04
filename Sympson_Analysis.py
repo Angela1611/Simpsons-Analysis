@@ -43,7 +43,7 @@ feature = st.sidebar.selectbox(
     feature_options
 )
 
-# Display image if no category is selected
+# Display image if no category is selected:
 if category == " ":
     image_path = "images_simpsons/01. Intro.jpg"
     image = Image.open(image_path)
